@@ -1,0 +1,14 @@
+scikit-learn
+seaborn
+numpy
+mlflow
+fastapi[standard]
+imblearn
+sqlalchemy 
+sqlmodel
+psycopg2-binary 
+python-multipart 
+passlib[bcrypt] 
+python-jose
+pwdlib[argon2]
+PyJWT
