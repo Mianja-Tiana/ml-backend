@@ -13,3 +13,4 @@ passlib
 bcrypt
 uuid
 requests
+jose
