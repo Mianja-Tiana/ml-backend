@@ -1,6 +1,8 @@
 import structlog
 from fastapi import FastAPI
-from src.controllers.routes.call_session_controller import router as call_session_router
+from contextlib import asynccontextmanager
+from src.db.database import engine,Base
+from src.controllers.routes.users import router as users_router
 from src.utils.logging import configure_logging
 from src.controllers.middleware.middleware import RequestIDMiddleware
 
@@ -9,9 +11,19 @@ configure_logging(log_level="INFO", json_logs=True)
 
 log = structlog.get_logger()
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        raise
+
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
 app.add_middleware(RequestIDMiddleware)
-app.include_router(call_session_router, prefix="/api", tags=["Call Sessions"])
+app.include_router(users_router, prefix="/api", tags=["users"])
 
 @app.get("/")
 def root():

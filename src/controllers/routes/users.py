@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from src.db.database import get_db
 from src.models.users import UserCreate, UserLogin, UserResponse, Token
 from datetime import timedelta
-from src.models import users
 from src.schemas.users import User as users_schema
 from src.utils.response_wrapper import api_response
 from src.controllers.middleware.auth import (
@@ -14,10 +13,10 @@ from src.controllers.middleware.auth import (
 )
 
 
-router = APIRouter(prefix="/users", tags=["Auth"])
+router = APIRouter()
 
-@router.post("/register", response_model=UserResponse)
-def register(user_data: users.UserCreate, db: Session = Depends(get_db)):
+@router.post("/register")
+def register(user_data: UserCreate, db: Session = Depends(get_db)):    
     db_user = db.query(users_schema).filter(users_schema.phone == user_data.phone).first()
     if db_user:
         raise HTTPException(status_code=400,
@@ -31,15 +30,24 @@ def register(user_data: users.UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    new_user.password=""
-    
-    user_response = UserResponse(**user_data.model_dump(),id=new_user.id) #issue here TODO:
+    user_response = UserResponse(
+        id=new_user.id,
+        phone=new_user.phone,
+        full_name=new_user.full_name,
+        email=new_user.email,
+        team=new_user.team,
+        address=new_user.address,
+        role=new_user.role,
+        created_at=new_user.created_at,
+        updated_at=new_user.updated_at,
+        is_active=new_user.is_active,
+    )
     
     return api_response(data=user_response, message="user registered successfully")
 
 
-@router.post("/login", response_model=Token)
-def login(login_data: users.UserLogin, db: Session = Depends(get_db)):
+@router.post("/login")
+def login(login_data: UserLogin, db: Session = Depends(get_db)):
     db_user = (
         db.query(users_schema)
         .filter((users_schema.phone == login_data.username) | (users_schema.email == login_data.username))

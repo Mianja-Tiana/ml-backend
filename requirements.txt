@@ -9,8 +9,8 @@ pytest
 structlog
 python-json-logger
 httpx
-passlib
-bcrypt
+bcrypt==4.0.1
+passlib[bcrypt]
 uuid
 requests
-jose
+python-jose[cryptography]
