@@ -1,8 +1,8 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import sessionmaker
 from pathlib import Path
 from dotenv import load_dotenv
@@ -32,9 +32,21 @@ else:
 )    
 
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
+
+
+try:     
+        with SessionLocal() as db:
+            db.execute(text("SELECT 1")).scalar()
+except Exception as exc:
+       
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database is unavailable"
+        ) from exc
+
 
 def get_db():
     db = SessionLocal()
