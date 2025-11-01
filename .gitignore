@@ -2,5 +2,3 @@ __pycache__
 .env
 mlruns/
 reports
-auth.py
-security.py

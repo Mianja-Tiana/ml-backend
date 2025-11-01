@@ -31,10 +31,7 @@ load_dotenv()
 # # Set MLflow tracking URI
 # MLFLOW_TRACKING_URI = f"{MLRUNS_PATH}"
 
-
-MLFLOW_TRACKING_URI = "/Users/ammi/Documents/fastapiApp/mlruns"
-
-print(f"{MLFLOW_TRACKING_URI}")
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
 
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
