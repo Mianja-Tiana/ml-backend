@@ -9,7 +9,6 @@ class UserBase(BaseModel):
     team: str
     role: str
     address: str
-    password: str
     created_at: date
     updated_at: date
     is_active: bool

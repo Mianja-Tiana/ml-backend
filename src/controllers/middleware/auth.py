@@ -1,10 +1,11 @@
-from datetime import datetime, timedelta
+import os
+import hashlib
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer
-import os
 from pathlib import Path
 
 SECRET_KEY = ""
@@ -21,9 +22,8 @@ if secret_path.exists():
         ACCESS_TOKEN_EXPIRE_MINUTES = 30
 else:
     SECRET_KEY = os.getenv("SECRET_KEY")
-    ALGORITHM = os.getenv("SECRET_KEY","HS256")
+    ALGORITHM = os.getenv("ALGORITHM","HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer_scheme = HTTPBearer()
@@ -32,11 +32,15 @@ def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
-    return pwd_context.hash(password)
+    password = password.encode("utf-8")
+    if len(password) > 72:
+        password = hashlib.sha256(password).digest()       
+    return pwd_context.hash(password.decode("utf-8"))
+    
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
