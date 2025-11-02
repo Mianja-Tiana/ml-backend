@@ -1,6 +1,5 @@
 name: CI/CD – build & deploy
 
-# only run pipeline when pushing to the specific branch
 on:
   push:
     branches:
@@ -11,10 +10,10 @@ permissions:
   id-token: write
 
 env:
-  IMAGE_NAME: ejahdilan/fastapi-app # change to your Docker Hub repo (or build multiple images by expanding job)
-  DOCKER_CONTEXT: .                      # path to Dockerfile context
-  COMPOSE_FILE: docker-compose.yml       # file in repo to copy to VM
-  REMOTE_DEPLOY_DIR: /home/churnsvc/churn-app-deploy # path on VM where compose file will be copied
+  IMAGE_NAME: ejahdilan/fastapi-app
+  DOCKER_CONTEXT: .                 
+  COMPOSE_FILE: docker-compose.yml 
+  REMOTE_DEPLOY_DIR: /home/churnsvc/churn-app-deploy
   LATEST_TAG: v1
 
 jobs:
@@ -30,6 +29,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Docker
+        uses: docker/setup-docker@v2
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -38,11 +40,9 @@ jobs:
         with:
           buildkitd-flags: --debug
       
-      - name: Reset Docker context to default
-        run: |
-          docker context use default || docker context create default
-
-
+      # - name: Reset Docker context to default
+      #   run: |
+      #     docker context use default || docker context create default
 
       - name: Cache Docker layers
         uses: actions/cache@v4
