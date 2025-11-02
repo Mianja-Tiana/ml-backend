@@ -55,15 +55,6 @@ jobs:
           restore-keys: |
             buildx-cache-
 
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        id: docker-cache
-        with:
-          path: /tmp/.buildx-cache
-          key: buildx-cache-${{ github.sha }}
-          restore-keys: |
-            buildx-cache-
-
       - name: Set image tags
         id: set-tags
         run: |
