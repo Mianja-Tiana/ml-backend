@@ -41,10 +41,10 @@ jobs:
       #   run: |
       #     docker context use default || docker context create default
 
-      - name: Create and use buildx builder with container driver
-        run: |
-          docker buildx create --name mybuilder --driver container --use
-          docker buildx inspect --bootstrap
+      # - name: Create and use buildx builder with container driver
+      #   run: |
+      #     docker buildx create --name mybuilder --driver container --use
+      #     docker buildx inspect --bootstrap
 
       - name: Cache Docker layers
         uses: actions/cache@v4
@@ -71,6 +71,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }} # use PAT (access token) or Docker Hub password if allowed
 
+      # - name: Build and push image (multi-platform ready)
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ${{ env.DOCKER_CONTEXT }}
+      #     file: ${{ env.DOCKER_CONTEXT }}/Dockerfile
+      #     push: true
+      #     tags: |
+      #       ${{ steps.set-tags.outputs.image_sha }}
+      #       ${{ steps.set-tags.outputs.image_full }}
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      #     builder: default
+      # - name: Move cache
+      #   run: |
+      #     rm -rf /tmp/.buildx-cache || true
+      #     mv /tmp/.buildx-cache-new /tmp/.buildx-cache || true
+
       - name: Build and push image (multi-platform ready)
         uses: docker/build-push-action@v5
         with:
@@ -80,13 +97,9 @@ jobs:
           tags: |
             ${{ steps.set-tags.outputs.image_sha }}
             ${{ steps.set-tags.outputs.image_full }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          cache-from: type=inline
+          cache-to: type=inline
           builder: default
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache || true
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache || true
 
   deploy-to-azure-vm:
     name: Copy compose and deploy to Azure VM
