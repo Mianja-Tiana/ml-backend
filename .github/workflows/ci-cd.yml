@@ -214,7 +214,7 @@ jobs:
         # Note: source supports globbing; copy additional files if needed
 
       - name: Pull image and deploy on remote VM (docker-compose)
-        uses: appleboy/ssh-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.AZURE_SSH_HOST }}
           username: ${{ secrets.AZURE_SSH_USER }}
