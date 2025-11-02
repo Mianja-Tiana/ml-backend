@@ -41,6 +41,20 @@ jobs:
       #   run: |
       #     docker context use default || docker context create default
 
+      - name: Create and use buildx builder with container driver
+        run: |
+          docker buildx create --name mybuilder --driver container --use
+          docker buildx inspect --bootstrap
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        id: docker-cache
+        with:
+          path: /tmp/.buildx-cache
+          key: buildx-cache-${{ github.sha }}
+          restore-keys: |
+            buildx-cache-
+
       - name: Cache Docker layers
         uses: actions/cache@v4
         id: docker-cache
