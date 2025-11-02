@@ -202,7 +202,7 @@ jobs:
           AZURE_SSH_HOST: ${{ secrets.AZURE_SSH_HOST }}
 
       - name: Copy docker-compose to Azure VM
-        uses: appleboy/scp-action@v0.1.12
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.AZURE_SSH_HOST }}
           username: ${{ secrets.AZURE_SSH_USER }}
