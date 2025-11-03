@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from src.db.database import get_db
 from src.models.users import UserCreate, UserLogin, UserResponse, Token
-from datetime import timedelta
+from datetime import timedelta, date
 from src.schemas.users import User as users_schema
 from src.utils.response_wrapper import api_response
 from src.controllers.middleware.auth import (
@@ -12,24 +12,35 @@ from src.controllers.middleware.auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
 )
 
-
 router = APIRouter()
 
 @router.post("/register")
 def register(user_data: UserCreate, db: Session = Depends(get_db)):    
+    # log.info("Register attempt", data=user_data.model_dump())  # Décommente pour debug
     db_user = db.query(users_schema).filter(users_schema.phone == user_data.phone).first()
     if db_user:
-        raise HTTPException(status_code=400,
-                             detail="user already exists")
-
+        raise HTTPException(status_code=400, detail="user already exists")
+    
     hashed_password = get_password_hash(user_data.password)
 
-    new_user = users_schema(
-        **user_data.model_dump())
+    # Auto-generate created_at, updated_at, is_active if None (because on ne demande pas au front 0)
+    now = date.today()  
+    user_data_dump = user_data.model_dump(exclude_unset=True)  # (None)
+    
+    ## I add this code 
+    if 'created_at' not in user_data_dump or user_data_dump['created_at'] is None:
+        user_data_dump['created_at'] = now
+    if 'updated_at' not in user_data_dump or user_data_dump['updated_at'] is None:
+        user_data_dump['updated_at'] = now
+    if 'is_active' not in user_data_dump or user_data_dump['is_active'] is None:
+        user_data_dump['is_active'] = True  # New users actifs by défaut
+
+    new_user = users_schema(**user_data_dump)
     new_user.password = hashed_password
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+    
     user_response = UserResponse(
         id=new_user.id,
         phone=new_user.phone,

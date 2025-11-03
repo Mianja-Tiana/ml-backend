@@ -1,20 +1,26 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 import uuid
 
 class UserBase(BaseModel):
     full_name: Optional[str] = None
+    email: Optional[str] = None
     phone: str
     team: str
     role: str
     address: str
-    created_at: date
-    updated_at: date
-    is_active: bool
+    ## I add this cod
+    # created_at: Optional[date] = None
+    # updated_at: Optional[date] = None
+    is_active: Optional[bool] = True
+
+
 
     class Config:
         from_attributes = True
+
+
 
 class UserCreate(UserBase):
     password: str
