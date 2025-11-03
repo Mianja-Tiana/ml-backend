@@ -31,18 +31,16 @@
 
 
 
-
-
 import os
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_USER = os.getenv("DB_USER", "user_placeholder")
-DB_PASS = os.getenv("DB_PASS", "pass_placeholder")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
+DB_USER = os.getenv("DB2_USER", "user_placeholder")
+DB_PASS = os.getenv("DB2_PASS", "pass_placeholder")
+DB_HOST = os.getenv("DB2_HOST", "localhost")
+DB_PORT = os.getenv("DB2_PORT", "5432")
 
 # Notice we do NOT use DB_NAME here because we connect to default "postgres" to manage DBs
 DEFAULT_DB_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/postgres"
