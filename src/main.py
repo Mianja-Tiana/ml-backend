@@ -9,6 +9,7 @@ from db.database import create_db_and_tables
 from utils.create_admin_user import create_default_admin
 
 from controllers.routes import auth, prediction, user, admin
+from db.create_database import create_database_if_not_exists
 
 # --------------------------
 # Load MLflow model from Registry
@@ -103,18 +104,29 @@ from controllers.routes import auth, prediction, user, admin
 
 
 
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     # --- Startup code ---
+#     create_db_and_tables()  # ensure tables exist
+#     try:
+#         create_default_admin()  # ensure admin user exists
+#     except Exception as e:
+#         print("Failed to create default admin on startup:", e)
+
+#     yield  # app runs here
+
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # --- Startup code ---
-    create_db_and_tables()  # ensure tables exist
+    create_database_if_not_exists("telecom_churn")
+    create_db_and_tables()
     try:
-        create_default_admin()  # ensure admin user exists
+        await create_default_admin()
     except Exception as e:
         print("Failed to create default admin on startup:", e)
 
-    yield  # app runs here
-
-
+    yield
 
 
 
