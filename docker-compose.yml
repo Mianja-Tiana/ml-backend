@@ -1,6 +1,6 @@
 services:
   fastapi-app:
-    image: ejahdilan/fastapi-app:92996e42
+    image: ejahdilan/fastapi-app:v1
     container_name: churn-fastapi-app
     restart: always
 
@@ -11,10 +11,10 @@ services:
       DB2_HOST: ${DB2_HOST}
       DB2_PORT: ${DB2_PORT}
       DB2_NAME: ${DB2_NAME}
-      DB2_PASS_FILE: /run/secrets/db2_password
+      # DB2_PASS_FILE: /run/secrets/db2_password
 
-    secrets:
-      - db2_password
+    # secrets:
+    #   - db2_password
 
     ports:
       - "8000:8000"
@@ -22,9 +22,9 @@ services:
     networks:
       - churnnet
 
-secrets:
-  db2_password:
-    file: /home/churnsvc/mlflow_setup/secrets/db2_pass.txt
+# secrets:
+#   db2_password:
+#     file: /home/churnsvc/mlflow_setup/secrets/db2_pass.txt
 
 networks:
   churnnet:
