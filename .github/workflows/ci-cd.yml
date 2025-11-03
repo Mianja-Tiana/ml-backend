@@ -169,13 +169,13 @@ jobs:
       - name: Build and push image (multi-platform ready)
         uses: docker/build-push-action@v6
         with:
-          context: .                           # Use repo root as context
-          file: ./dockerfile                   # Adjust if your Dockerfile is elsewhere
+          context: . 
+          file: ./dockerfile 
           push: true
           tags: |
             ${{ steps.set-tags.outputs.image_sha }}
             ${{ steps.set-tags.outputs.image_full }}
-          cache-from: type=inline              # Use inline cache for better caching
+          cache-from: type=inline 
           cache-to: type=inline,mode=max
           builder: default
 
@@ -212,38 +212,34 @@ jobs:
 
       - name: Pull image and deploy on remote VM (docker-compose)
         uses: appleboy/ssh-action@v1.0.0
+        env:
+        REMOTE_DIR: ${{ env.REMOTE_DEPLOY_DIR }}
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         with:
           host: ${{ secrets.AZURE_SSH_HOST }}
           username: ${{ secrets.AZURE_SSH_USER }}
           port: ${{ secrets.AZURE_SSH_PORT || 22 }}
           key: ${{ secrets.AZURE_SSH_PRIVATE_KEY }}
+          envs: REMOTE_DIR,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN
           script: |
             set -euo pipefail
 
             # ensure directory
-            mkdir -p {{ REMOTE_DIR }} || true
-            cd {{ REMOTE_DIR }}
-
-            # optional: export Docker Hub credentials as env so docker-compose can pull private images
-            export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
-            export DOCKERHUB_TOKEN="${{ secrets.DOCKERHUB_TOKEN }}"
+            mkdir -p "$REMOTE_DIR" || true
+            cd "$REMOTE_DIR"
 
             # login to docker hub (non-interactive)
             echo "$DOCKERHUB_TOKEN" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-
-            # change to deploy dir
-            cd "${{ env.REMOTE_DEPLOY_DIR }}" || exit 1
 
             # Pull and restart services
             if command -v docker-compose >/dev/null 2>&1; then
               docker-compose pull --ignore-pull-failures
               docker-compose up -d --remove-orphans
             else
-              # If using Swarm stack deploy: assume docker stack file name is docker-stack.yml
-              docker stack deploy -c docker-stack.yml mlflow_stack || true
+              echo "docker-compose not found, cannot deploy services."
+              exit 1
             fi
-
+            
             # optional: cleanup dangling images
             docker image prune -f || true
-        env:
-          REMOTE_DIR: ${{ env.REMOTE_DEPLOY_DIR }}
