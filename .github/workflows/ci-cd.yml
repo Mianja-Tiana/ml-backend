@@ -205,7 +205,7 @@ jobs:
           username: ${{ secrets.AZURE_SSH_USER }}
           port: ${{ secrets.AZURE_SSH_PORT || 22 }}
           key: ${{ secrets.AZURE_SSH_PRIVATE_KEY }}
-          source: ./docker-compose.yml
+          source: "./docker-compose.yml"
           target: ${{ env.REMOTE_DEPLOY_DIR }}
           strip_components: 0
         # Note: source supports globbing; copy additional files if needed
