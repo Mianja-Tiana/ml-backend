@@ -43,6 +43,7 @@ services:
       DB2_HOST: ${DB2_HOST}
       DB2_PORT: ${DB2_PORT}
       DB2_NAME: ${DB2_NAME}
+      DB2_PASS: ${DB2_PASS}
     ports:
       - "8000:8000"
 
