@@ -3,6 +3,8 @@ services:
     image: ejahdilan/fastapi-app:v1
     container_name: churn-fastapi-app
     restart: always
+    # env_file:
+    #   - ./.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
@@ -25,6 +27,6 @@ services:
 #   db2_password:
 #     file: /home/churnsvc/mlflow_setup/secrets/db2_pass.txt
 
-networks:
-  churnnet:
-    driver: bridge
+# networks:
+#   churnnet:
+#     driver: bridge
