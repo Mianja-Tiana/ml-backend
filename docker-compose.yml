@@ -45,8 +45,14 @@ services:
       DB2_NAME: ${DB2_NAME}
       DB2_PASS: ${DB2_PASS}
       MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_DIR}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+
     ports:
       - "8000:8000"
+    volumes:
+      - /home/churnsvc/mlartifacts:/home/churnsvc/mlartifacts 
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]

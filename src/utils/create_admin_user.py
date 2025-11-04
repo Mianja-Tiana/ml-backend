@@ -15,11 +15,10 @@ def create_default_admin() -> None:
     - ADMIN_EMAIL
     - ADMIN_PASSWORD
 
-    Raises:
-        EnvironmentError: if any required env variable is missing.
+    This version includes strict existence checks
+    and avoids printing sensitive credentials.
     """
 
-    # --- Enforce required environment variables ---
     admin_username = os.getenv("ADMIN_USERNAME")
     admin_email = os.getenv("ADMIN_EMAIL")
     admin_password = os.getenv("ADMIN_PASSWORD")
@@ -30,21 +29,21 @@ def create_default_admin() -> None:
             "ADMIN_USERNAME, ADMIN_EMAIL, ADMIN_PASSWORD"
         )
 
-    # --- Open a session safely ---
     session_generator = get_session()
     session: Session = next(session_generator)
 
     try:
-        # Check if the admin already exists
-        existing_admin = session.exec(
-            select(User).where(User.username == admin_username)
+        # Check if user exists already (by username OR email)
+        existing_user = session.exec(
+            select(User).where(
+                (User.username == admin_username) | (User.email == admin_email)
+            )
         ).first()
 
-        if existing_admin:
-            print("Admin user already exists.")
+        if existing_user:
+            print("Admin user already exists. Skipping creation.")
             return
 
-        # Create new admin user
         admin_user = User(
             username=admin_username,
             email=admin_email,
@@ -56,10 +55,7 @@ def create_default_admin() -> None:
         session.commit()
         session.refresh(admin_user)
 
-        print(f" Default admin created successfully:")
-        print(f"   Username: {admin_user.username}")
-        print(f"   Password: {admin_password}")
-        print(f"   Role: {admin_user.role}")
+        print(f"Default admin created successfully: username={admin_username}, role=ADMIN")
 
     except Exception as e:
         session.rollback()
@@ -67,12 +63,11 @@ def create_default_admin() -> None:
 
     finally:
         session.close()
-        # Close the generator properly
         try:
             next(session_generator)
         except StopIteration:
             pass
 
-# Run manually if script is executed directly
+
 if __name__ == "__main__":
     create_default_admin()
