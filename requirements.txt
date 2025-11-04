@@ -12,3 +12,4 @@ passlib[bcrypt]
 python-jose
 pwdlib[argon2]
 PyJWT
+imbalanced-learn

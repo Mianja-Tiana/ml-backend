@@ -41,9 +41,10 @@ services:
     environment:
       DB2_USER: ${DB2_USER}
       DB2_HOST: ${DB2_HOST}
-      DB2_PORT: ${DB2_PORT}
+      DB2_PORT: ${DB_PORT}
       DB2_NAME: ${DB2_NAME}
       DB2_PASS: ${DB2_PASS}
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_DIR}
     ports:
       - "8000:8000"
 
