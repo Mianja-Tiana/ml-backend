@@ -5,7 +5,7 @@ from src.db.database import engine,Base
 from src.controllers.routes.users import router as users_router
 from src.utils.logging import configure_logging
 from src.controllers.middleware.middleware import RequestIDMiddleware
-
+from fastapi.middleware.cors import CORSMiddleware  
 
 configure_logging(log_level="INFO", json_logs=True)
 
@@ -21,8 +21,16 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(RequestIDMiddleware)
+
+
 app.include_router(users_router, prefix="/api", tags=["users"])
 
 @app.get("/")
