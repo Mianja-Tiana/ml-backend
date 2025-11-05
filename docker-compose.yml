@@ -23,24 +23,26 @@ services:
     # depends_on:
     #   oauth2-proxy-fastapi:CD D
     #     condition: service_healthy
-    environment:
-      DB2_USER: ${DB2_USER}
-      DB2_HOST: ${DB2_HOST}
-      DB2_PORT: ${DB_PORT}
-      DB2_NAME: ${DB2_NAME}
-      DB2_PASS: ${DB2_PASS}
-      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
-      ADMIN_USERNAME: ${ADMIN_USERNAME}
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      SECRET_KEY: ${SECRET_KEY}
-      ALGORITHM: ${ALGORITHM}
-      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+    env_file:
+      - .env
+    # environment:
+    #   DB2_USER: ${DB2_USER}
+    #   DB2_HOST: ${DB2_HOST}
+    #   DB2_PORT: ${DB_PORT}
+    #   DB2_NAME: ${DB2_NAME}
+    #   DB2_PASS: ${DB2_PASS}
+    #   MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
+    #   ADMIN_USERNAME: ${ADMIN_USERNAME}
+    #   ADMIN_EMAIL: ${ADMIN_EMAIL}
+    #   ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    #   SECRET_KEY: ${SECRET_KEY}
+    #   ALGORITHM: ${ALGORITHM}
+    #   ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
     ports:
       - "8000:8000"
     volumes:
       - /home/churnsvc/mlartifacts:/home/churnsvc/mlartifacts
-       
+
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
     #   interval: 20s
