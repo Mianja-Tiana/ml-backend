@@ -45,8 +45,8 @@ services:
       - secret_key
     ports:
       - "8000:8000"
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     # volumes:
     #   - /home/churnsvc/mlartifacts:/home/churnsvc/mlartifacts
 
