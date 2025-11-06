@@ -4,7 +4,7 @@ from typing import List
 from schemas.schema import UserRead, FeedbackRead, FeedbackCreate, User, UserOut
 from schemas.schema import MLModelRead, MLModelCreate
 from db.database import get_session
-from auth.security import get_current_user
+from controllers.middleware.auth import get_current_user
 from models.model import Feedback, MLModel, PredictionLog, UserRole
 import mlflow
 import os

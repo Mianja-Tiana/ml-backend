@@ -6,18 +6,19 @@ from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 # from sqlmodel import Session, select
 from db.database import create_db_and_tables
+from controllers.routes import feedback
 from utils.create_admin_user import create_default_admin
 
-from controllers.routes import auth, prediction, user, admin, health_check
-from init_db import create_database_if_not_exists
+from controllers.routes import prediction, admin, health_check, users
+# from init_db import create_database_if_not_exists
 
 import structlog
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from src.db.database import engine,Base
-from src.controllers.routes.users import router as users_router
-from src.utils.logging import configure_logging
-from src.controllers.middleware.middleware import RequestIDMiddleware
+from db.database import engine,Base
+from controllers.routes.users import router as users_router
+from utils.logging import configure_logging
+from controllers.middleware.middleware import RequestIDMiddleware
 from fastapi.middleware.cors import CORSMiddleware  
 
 
@@ -213,10 +214,10 @@ app = FastAPI(title="Churn Prediction API", lifespan=lifespan)
 
 # Register routers
 app.include_router(health_check.router)
-app.include_router(auth.router)
+app.include_router(users.router)
 app.include_router(prediction.router)
 app.include_router(admin.router)
-app.include_router(user.router)
+app.include_router(feedback.router)
 app.add_middleware(RequestIDMiddleware)
 
 configure_logging(log_level="INFO", json_logs=True)
@@ -232,22 +233,22 @@ log = structlog.get_logger()
 
 #     yield
 
-app = FastAPI(lifespan=lifespan)
+# app = FastAPI(lifespan=lifespan)
 
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+# # app.add_middleware(
+# #     CORSMiddleware,
+# #     allow_origins=["*"],  
+# #     allow_credentials=True,
+# #     allow_methods=["*"],
+# #     allow_headers=["*"],
+# # )
 
 
-app.add_middleware(RequestIDMiddleware)
+# app.add_middleware(RequestIDMiddleware)
 
 
-app.include_router(users_router, prefix="/api", tags=["users"])
+# app.include_router(users_router, prefix="/api", tags=["users"])
 
 @app.get("/")
 def root():

@@ -4,7 +4,7 @@ import os
 from sqlmodel import select, Session
 from db.database import get_session
 from models.model import User, UserRole
-from auth.security import get_password_hash
+from controllers.middleware.auth import get_password_hash
 
 
 def create_default_admin() -> None:
