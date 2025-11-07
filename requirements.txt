@@ -6,10 +6,7 @@ fastapi[standard]
 imblearn
 sqlalchemy 
 sqlmodel
-<<<<<<< HEAD
 structlog
-=======
->>>>>>> main
 psycopg2-binary 
 python-multipart 
 passlib[bcrypt] 
@@ -20,10 +17,6 @@ imbalanced-learn
 python-jose[cryptography]
 python-json-logger
 httpx
-<<<<<<< HEAD
 pydantic
 pytest
 azure-storage-blob
-=======
-pydantic
->>>>>>> main
