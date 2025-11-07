@@ -6,3 +6,4 @@ reports
 .venv
 __pycache__/
 secrets
+.pytest_cache/

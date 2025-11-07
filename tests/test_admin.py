@@ -4,7 +4,7 @@ from sqlmodel import Session
 from src.main import app
 from src.models.model import User, UserRole
 from src.db.database import get_session
-from src.controllers.middleware.auth import get_password_hash, get_current_user
+from src.controllers.middleware.auth import get_current_user
 
 # Mock admin user for dependency override
 def override_get_current_user_admin():
@@ -17,8 +17,7 @@ def override_get_current_user_nonadmin():
 # Override session to use test DB or a mock
 @pytest.fixture
 def session_override():
-    # Implement your test DB session here, e.g., in-memory SQLite
-    # For simplicity, assume you yield a session object here
+    # Implement your test DB session here
     with Session() as session:
         yield session
 
@@ -86,3 +85,4 @@ def test_create_admin_username_exists(monkeypatch):
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Username or email already exists"
+

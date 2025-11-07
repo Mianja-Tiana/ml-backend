@@ -12,11 +12,8 @@ class UserBase(BaseModel):
     address: str
     is_active: Optional[bool] = True
 
-
-
     class Config:
         from_attributes = True
-
 
 
 class UserCreate(UserBase):

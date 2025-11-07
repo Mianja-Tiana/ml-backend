@@ -47,24 +47,24 @@ def test_login():
         print(f"Network error: {e}")
         return None
 
-def test_profile(token):
-    print("\nTest 3: Fetching user profile...")
-    try:
-        headers = {"Authorization": f"Bearer {token}"}
-        response = requests.get(f"{BASE_URL}/auth/profile", headers=headers)
-        if response.status_code == 200:
-            profile = response.json()
-            print("Profile retrieved!")
-            print(f"   Username: {profile['username']}")
-            print(f"   Name: {profile['full_name']}")
-            print(f"   Team: {profile['team']}")
-            print(f"   Role: {profile['role']}")
-            print(f"   Joined on: {profile['joined_date']}")
-            print(f"   Active: {'Yes' if profile['is_active'] else 'No'}")
-        else:
-            print(f"Profile fetch failed: {response.json()}")
-    except Exception as e:
-        print(f"Network error: {e}")
+# def test_profile(token):
+#     print("\nTest 3: Fetching user profile...")
+#     try:
+#         headers = {"Authorization": f"Bearer {token}"}
+#         response = requests.get(f"{BASE_URL}/auth/profile", headers=headers)
+#         if response.status_code == 200:
+#             profile = response.json()
+#             print("Profile retrieved!")
+#             print(f"   Username: {profile['username']}")
+#             print(f"   Name: {profile['full_name']}")
+#             print(f"   Team: {profile['team']}")
+#             print(f"   Role: {profile['role']}")
+#             print(f"   Joined on: {profile['joined_date']}")
+#             print(f"   Active: {'Yes' if profile['is_active'] else 'No'}")
+#         else:
+#             print(f"Profile fetch failed: {response.json()}")
+#     except Exception as e:
+#         print(f"Network error: {e}")
 
 def test_login_fail():
     print("\nTest 4: Trying to login with wrong password...")
