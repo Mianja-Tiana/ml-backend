@@ -7,35 +7,33 @@ from mlflow.tracking import MlflowClient
 # from sqlmodel import Session, select
 
 
-# --------------------------
-# Load MLflow model from Registry
-# --------------------------
 load_dotenv()
 
 # Absolute path to your mlruns folder
-# BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-# MLFLOW_TRACKING_URI = f"file://{os.path.join(BASE_DIR, 'mlruns')}"
+MLFLOW_TRACKING_URI = f"file://{os.path.join(BASE_DIR, 'mlruns')}"
 
-# MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
 
-# mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
-# # Absolute path to your desired mlruns folder
-# BASE_DIR = "/Users/ammi/Documents/telCustomerChurn"
-# MLRUNS_PATH = os.path.join(BASE_DIR, "mlruns")
+# Absolute path to your desired mlruns folder
+BASE_DIR = "/Users/ammi/Documents/telCustomerChurn"
+MLRUNS_PATH = os.path.join(BASE_DIR, "mlruns")
 
-# # Make sure the directory exists
-# os.makedirs(MLRUNS_PATH, exist_ok=True)
+# Make sure the directory exists
+os.makedirs(MLRUNS_PATH, exist_ok=True)
 
-# # Set MLflow tracking URI
-# MLFLOW_TRACKING_URI = f"{MLRUNS_PATH}"
+# Set MLflow tracking URI
+MLFLOW_TRACKING_URI = f"{MLRUNS_PATH}"
 
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
 
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
 MODEL_NAME = os.getenv("MODEL_NAME", "Churn_RandomForest")
+
 # MODEL_VERSION = os.getenv("MODEL_VERSION", "1")  # specify a version explicitly
 
 # Get the latest version of the model from MLflow

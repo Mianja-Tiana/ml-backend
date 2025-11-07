@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 from db.database import create_db_and_tables
 from controllers.routes import feedback
 from utils.create_admin_user import create_default_admin
+from loaders.model_loader import ModelArtifacts
 
 from controllers.routes import prediction, admin, health_check, users
 # from init_db import create_database_if_not_exists
@@ -122,14 +123,24 @@ log = structlog.get_logger()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # --- Startup code ---
-    create_db_and_tables()  # ensure tables exist
-    try:
-        create_default_admin()  # ensure admin user exists
-    except Exception as e:
-        print("Failed to create default admin on startup:", e)
+    # --- Startup Block ---
+    # 1) Create DB tables
+    create_db_and_tables()
 
-    yield  # app runs here
+    # 2) Create default admin
+    try:
+        create_default_admin()
+    except Exception as e:
+        print("Failed to create default admin:", e)
+
+    # 3) Load model + feature engineering artifacts ONCE
+    try:
+        ModelArtifacts.load()
+        print("ML artifacts loaded successfully")
+    except Exception as e:
+        print("Failed loading ML artifacts:", e)
+
+    yield
 
 
 

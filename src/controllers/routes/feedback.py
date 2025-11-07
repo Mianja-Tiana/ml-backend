@@ -182,22 +182,6 @@ def create_model(
     return db_model
 
 
-
-# ============================================================
-# LOGS
-# ============================================================
-
-# @router.get("/logs/", response_model=List[PredictionLog])
-# def list_logs(
-#     session: Session = Depends(get_session),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     """Get logs related to the current user"""
-#     logs = session.exec(
-#         select(PredictionLog).where(PredictionLog.user_id == current_user.id)
-#     ).all()
-#     return logs
-
 @router.get("/logs/", response_model=List[PredictionLog])
 def list_logs(
     session: Session = Depends(get_session),

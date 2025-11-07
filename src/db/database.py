@@ -27,7 +27,7 @@ POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
 # secrets (password only stored as docker secret)
-POSTGRES_PASSWORD = read_secret("/run/secrets/postgres_password") or os.getenv("POSTGRES_PASSWORD")
+POSTGRES_PASSWORD =os.getenv("POSTGRES_PASSWORD")
 
 DATABASE_URL = (
     f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}"

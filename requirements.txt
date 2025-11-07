@@ -19,3 +19,4 @@ python-json-logger
 httpx
 pydantic
 pytest
+azure-storage-blob
