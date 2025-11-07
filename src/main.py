@@ -1,12 +1,9 @@
 from fastapi import FastAPI
-import mlflow
-import pandas as pd
 import os
-from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 # from sqlmodel import Session, select
 from db.database import create_db_and_tables
-from controllers.routes import feedback
+from controllers.routes import feedback, auth, user
 from utils.create_admin_user import create_default_admin
 from loaders.model_loader import ModelArtifacts
 
@@ -16,7 +13,7 @@ from controllers.routes import prediction, admin, health_check, users
 import structlog
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from db.database import engine,Base
+# from db.database import engine,Base
 from controllers.routes.users import router as users_router
 from utils.logging import configure_logging
 from controllers.middleware.middleware import RequestIDMiddleware
@@ -60,7 +57,44 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print("Failed loading ML artifacts:", e)
 
-    yield
+    yield  # app runs here
+
+
+
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     create_database_if_not_exists("telecom_churn")
+#     create_db_and_tables()
+#     try:
+#         await create_default_admin()
+#     except Exception as e:
+#         print("Failed to create default admin on startup:", e)
+
+#     yield
+
+
+app = FastAPI(title="Churn Prediction API", lifespan=lifespan)
+
+# Register routers
+app.include_router(health_check.router)
+app.include_router(auth.router)
+app.include_router(prediction.router)
+app.include_router(admin.router)
+app.include_router(user.router)
+app.add_middleware(RequestIDMiddleware)
+
+configure_logging(log_level="INFO", json_logs=True)
+
+log = structlog.get_logger()
+
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     try:
+#         Base.metadata.create_all(bind=engine)
+#     except Exception as e:
+#         raise
+
+#     yield
 
 
 

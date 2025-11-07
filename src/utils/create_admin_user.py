@@ -1,4 +1,3 @@
-# app/utils/create_default_admin.py
 import os
 from sqlmodel import select, Session
 from db.database import get_session

@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from models.model import User, UserRole
+<<<<<<< HEAD
 from controllers.middleware.auth import get_password_hash, get_current_user
+=======
+from auth.security import get_password_hash, get_current_user
+>>>>>>> main
 from db.database import get_session
 from schemas.schema import UserCreate
 

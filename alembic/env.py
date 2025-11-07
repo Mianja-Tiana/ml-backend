@@ -7,8 +7,11 @@ from sqlalchemy import pool
 
 from alembic import context
 from src.models.model import SQLModel
+<<<<<<< HEAD
 from pathlib import Path
 import sqlmodel
+=======
+>>>>>>> main
 
 
 load_dotenv()
@@ -23,6 +26,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+<<<<<<< HEAD
 # # Get the database server URL from environment variable
 
 # DATABASE_URL = f"postgresql+psycopg2://{DB2_USER}:{DB2_PASS}@{DB2_HOST}:{DB2_PORT}/{DB2_NAME}"
@@ -48,6 +52,19 @@ DATABASE_URL = (
     f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 )
+=======
+
+DB2_USER = os.getenv("DB2_USER")
+DB2_PASS = os.getenv("DB2_PASS")
+DB2_HOST = os.getenv("DB2_HOST")
+DB2_PORT = os.getenv("DB2_PORT")
+DB2_NAME = os.getenv("DB2_NAME")
+
+
+# Get the database server URL from environment variable
+
+DATABASE_URL = f"postgresql+psycopg2://{DB2_USER}:{DB2_PASS}@{DB2_HOST}:{DB2_PORT}/{DB2_NAME}"
+>>>>>>> main
 
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable not set!")

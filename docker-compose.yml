@@ -1,4 +1,5 @@
 services:
+<<<<<<< HEAD
 
   postgres:
     image: postgres:latest
@@ -20,6 +21,8 @@ services:
       timeout: 5s
       retries: 5
 
+=======
+>>>>>>> main
   oauth2-proxy-fastapi:
     image: ejahdilan/oauthapp-fastapi:v1
     container_name: oauth2-proxy-fastapi
@@ -28,6 +31,7 @@ services:
       - "4181:4181"
     volumes:
       - /etc/oauth2-proxy-fastapi.cfg:/etc/oauth2-proxy-fastapi.cfg:ro
+<<<<<<< HEAD
 
   fastapi-app:
     image: ejahdilan/fastapi-app:v8
@@ -60,3 +64,47 @@ secrets:
     file: ./secrets/admin_password.txt
   secret_key:
     file: ./secrets/secret_key.txt
+=======
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:4181/oauth2/health"]
+    #   interval: 20s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 30s
+
+  fastapi-app:
+    image: ejahdilan/fastapi-app:v1
+    container_name: churn-fastapi-app
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # depends_on:
+    #   oauth2-proxy-fastapi:CD D
+    #     condition: service_healthy
+    env_file:
+      - .env
+    # environment:
+    #   DB2_USER: ${DB2_USER}
+    #   DB2_HOST: ${DB2_HOST}
+    #   DB2_PORT: ${DB_PORT}
+    #   DB2_NAME: ${DB2_NAME}
+    #   DB2_PASS: ${DB2_PASS}
+    #   MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
+    #   ADMIN_USERNAME: ${ADMIN_USERNAME}
+    #   ADMIN_EMAIL: ${ADMIN_EMAIL}
+    #   ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    #   SECRET_KEY: ${SECRET_KEY}
+    #   ALGORITHM: ${ALGORITHM}
+    #   ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+    ports:
+      - "8000:8000"
+    volumes:
+      - /home/churnsvc/mlartifacts:/home/churnsvc/mlartifacts
+
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    #   interval: 20s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 30s
+>>>>>>> main
