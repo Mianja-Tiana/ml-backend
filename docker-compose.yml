@@ -1,4 +1,28 @@
 services:
+<<<<<<< HEAD
+
+  postgres:
+    image: postgres:latest
+    container_name: churn-postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    secrets:
+      - postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d churn"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+=======
+>>>>>>> main
   oauth2-proxy-fastapi:
     image: ejahdilan/oauthapp-fastapi:v1
     container_name: oauth2-proxy-fastapi
@@ -7,6 +31,40 @@ services:
       - "4181:4181"
     volumes:
       - /etc/oauth2-proxy-fastapi.cfg:/etc/oauth2-proxy-fastapi.cfg:ro
+<<<<<<< HEAD
+
+  fastapi-app:
+    image: ejahdilan/fastapi-app:v8
+    container_name: churn-fastapi-app
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      # secret values will be read inside app from secrets path at runtime
+    secrets:
+      - postgres_password
+      - admin_password
+      - secret_key
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # volumes:
+    #   - /home/churnsvc/mlartifacts:/home/churnsvc/mlartifacts
+
+volumes:
+  postgres_data:
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  admin_password:
+    file: ./secrets/admin_password.txt
+  secret_key:
+    file: ./secrets/secret_key.txt
+=======
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:4181/oauth2/health"]
     #   interval: 20s
@@ -49,3 +107,4 @@ services:
     #   timeout: 5s
     #   retries: 5
     #   start_period: 30s
+>>>>>>> main

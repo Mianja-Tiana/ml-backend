@@ -1,10 +1,10 @@
-# app/utils/create_default_admin.py
-
 import os
 from sqlmodel import select, Session
 from db.database import get_session
 from models.model import User, UserRole
-from auth.security import get_password_hash
+from controllers.middleware.auth import get_password_hash
+from pathlib import Path
+import os
 
 
 def create_default_admin() -> None:
@@ -19,9 +19,15 @@ def create_default_admin() -> None:
     and avoids printing sensitive credentials.
     """
 
+    def read_secret(path: str) -> str | None:
+        p = Path(path)
+        return p.read_text().strip() if p.exists() else None
+
     admin_username = os.getenv("ADMIN_USERNAME")
     admin_email = os.getenv("ADMIN_EMAIL")
-    admin_password = os.getenv("ADMIN_PASSWORD")
+
+    # SECRET – read from docker secret first
+    admin_password = read_secret("/run/secrets/admin_password") or os.getenv("ADMIN_PASSWORD")
 
     if not all([admin_username, admin_email, admin_password]):
         raise EnvironmentError(
@@ -69,5 +75,5 @@ def create_default_admin() -> None:
             pass
 
 
-if __name__ == "__main__":
-    create_default_admin()
+# if __name__ == "__main__":
+#     create_default_admin()

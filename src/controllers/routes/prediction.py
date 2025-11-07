@@ -1,10 +1,27 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+<<<<<<< HEAD
+=======
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
+>>>>>>> main
 import pandas as pd
 from sqlmodel import Session, select
 from schemas.churn_input import ChurnInput
 from models.model import User, Prediction, PredictionLog, MLModel, PredictionMetadata
+<<<<<<< HEAD
+from controllers.middleware.auth import get_current_user, get_session
+#from utils.ml_utils import model, train_columns, latest_version
+from ml.pipeline import preprocess_input
+from schemas.schema import PredictionRead
+from typing import List
+from loaders.model_loader import ModelArtifacts
+
+router = APIRouter(prefix="/predict", tags=["Prediction"])
+
+
+### Optimized prediction endpoint
+
+=======
 from auth.security import get_current_user, get_session
 # from app.database import get_session
 from utils.ml_utils import model, train_columns, latest_version
@@ -13,6 +30,7 @@ from typing import List
 
 router = APIRouter(prefix="/predict", tags=["Prediction"])
 
+>>>>>>> main
 @router.post("/", summary="Predict Customer Churn", response_model=dict)
 def predict_churn(
     data: ChurnInput,
@@ -20,6 +38,23 @@ def predict_churn(
     current_user: User = Depends(get_current_user),
     request: Request = None
 ):
+<<<<<<< HEAD
+    print(f"Prediction request made by user: {current_user.username}")
+
+    df = pd.DataFrame([data.model_dump()])
+
+    # Only use the stored transforms and model
+    X = ModelArtifacts.fe.transform(df)
+    y_pred = ModelArtifacts.model.predict(X)[0]
+    prob = float(ModelArtifacts.model.predict_proba(X)[0, 1])
+
+    # store prediction + metadata + log exactly same as before
+    prediction_record = Prediction(
+        user_id=current_user.id,
+        input_data=df.to_json(),
+        prediction=int(y_pred),
+        probability=prob
+=======
     """
     Protected churn prediction endpoint.
     Only accessible with a valid JWT token.
@@ -95,11 +130,22 @@ def predict_churn(
         input_data=input_df.to_json(),
         prediction=int(prediction_val),
         probability=probability_val
+>>>>>>> main
     )
     session.add(prediction_record)
     session.commit()
     session.refresh(prediction_record)
 
+<<<<<<< HEAD
+    # Attach model version / metadata link same way like before
+    model_record = session.exec(
+        select(MLModel).where(
+            MLModel.name == ModelArtifacts.model_name,
+            MLModel.version == ModelArtifacts.version
+        )
+    ).first()
+
+=======
     # -----------------------------
 # Save PredictionMetadata
 # -----------------------------
@@ -112,10 +158,16 @@ def predict_churn(
         raise HTTPException(status_code=500, detail="ML model record not found in DB")
 
     # Create PredictionMetadata
+>>>>>>> main
     metadata_record = PredictionMetadata(
         prediction_id=prediction_record.id,
         model_id=model_record.id
     )
+<<<<<<< HEAD
+    session.add(metadata_record)
+    session.commit()
+
+=======
 
     session.add(metadata_record)
     session.commit()
@@ -125,6 +177,7 @@ def predict_churn(
     # -----------------------------
     # Save Prediction Log
     # -----------------------------
+>>>>>>> main
     log_record = PredictionLog(
         prediction_id=prediction_record.id,
         user_id=current_user.id,
@@ -134,6 +187,20 @@ def predict_churn(
     session.add(log_record)
     session.commit()
 
+<<<<<<< HEAD
+    return {
+        "user": current_user.username,
+        "prediction": int(y_pred),
+        "probability": prob,
+        "prediction_id": prediction_record.id,
+        "model_version": ModelArtifacts.version
+    }
+
+
+
+# Endpoint to list all predictions
+
+=======
     # -----------------------------
     # Return Response
     # -----------------------------
@@ -156,6 +223,7 @@ def predict_churn(
 # -----------------------------
 # Endpoint to list all predictions
 # -----------------------------
+>>>>>>> main
 @router.get("/predictions/", response_model=List[PredictionRead])
 def list_predictions(
     session: Session = Depends(get_session),
@@ -170,9 +238,15 @@ def list_predictions(
     return predictions
 
 
+<<<<<<< HEAD
+
+# Endpoint: Get a single prediction
+
+=======
 # -----------------------------
 # Endpoint: Get a single prediction
 # -----------------------------
+>>>>>>> main
 @router.get("/predictions/{prediction_id}", response_model=PredictionRead)
 def get_prediction(
     prediction_id: int,

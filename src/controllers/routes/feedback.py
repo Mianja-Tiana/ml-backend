@@ -4,26 +4,22 @@ from typing import List
 from schemas.schema import UserRead, FeedbackRead, FeedbackCreate, User, UserOut
 from schemas.schema import MLModelRead, MLModelCreate
 from db.database import get_session
-from auth.security import get_current_user
+from controllers.middleware.auth import get_current_user
 from models.model import Feedback, MLModel, PredictionLog, UserRole
 import mlflow
 import os
 
 router = APIRouter(prefix="/api", tags=["Telecom Churn"])
 
-# ============================================================
 # USERS
-# ============================================================
 
 @router.get("/users/me", response_model=UserRead)
 def get_me(current_user: User = Depends(get_current_user)):
     """Get the current authenticated user's profile"""
     return current_user
 
-
-# # -----------------------------
 # Admin-only users listing
-# -----------------------------
+
 @router.get("/users/", response_model=List[UserOut])
 def list_users(
     session: Session = Depends(get_session),
@@ -44,9 +40,8 @@ def list_users(
     users = session.exec(select(User)).all()
     return users
 
-# ============================================================
+
 # FEEDBACK
-# ============================================================
 
 @router.post("/feedback/", response_model=FeedbackRead)
 def create_feedback(
@@ -74,9 +69,8 @@ def create_feedback(
     return feedback
 
 
-# -----------------------------
 # Admin-only endpoint
-# -----------------------------
+
 @router.get("/feedback/", response_model=List[FeedbackRead])
 def list_feedback(
     session: Session = Depends(get_session),
@@ -99,9 +93,8 @@ def list_feedback(
     return feedbacks
 
 
-# -----------------------------
 # Admin-only endpoint
-# -----------------------------
+
 @router.get("/models/", response_model=List[MLModelRead])
 def list_models(
     session: Session = Depends(get_session),
@@ -124,9 +117,9 @@ def list_models(
     return models
 
 
-# -----------------------------
+
 # Model creation with MLflow load (no admin check)
-# -----------------------------
+
 @router.post("/models/", response_model=MLModelRead)
 def create_model(
     model_in: MLModelCreate,
@@ -137,7 +130,7 @@ def create_model(
     Automatically loads the latest version from MLflow using the sklearn flavor (Endpoint to be modified)
     """
 
-    # ---------- MLflow setup ----------
+    # MLflow setup
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     MLFLOW_TRACKING_URI = f"file://{os.path.join(BASE_DIR, 'mlruns')}"
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
@@ -160,7 +153,7 @@ def create_model(
             detail=f"Error retrieving MLflow model: {str(e)}"
         )
 
-    # ---------- Load MLflow model (sklearn flavor) ----------
+    #  Load MLflow model (sklearn flavor)
     try:
         model = mlflow.sklearn.load_model(model_uri)
     except Exception as e:
@@ -169,7 +162,7 @@ def create_model(
             detail=f"Failed to load MLflow model: {str(e)}"
         )
 
-    # ---------- Save model metadata in DB ----------
+    #  Save model metadata in DB
     db_model = MLModel(
         name=model_in.name,
         version=str(latest_version),
@@ -181,22 +174,6 @@ def create_model(
 
     return db_model
 
-
-
-# ============================================================
-# LOGS
-# ============================================================
-
-# @router.get("/logs/", response_model=List[PredictionLog])
-# def list_logs(
-#     session: Session = Depends(get_session),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     """Get logs related to the current user"""
-#     logs = session.exec(
-#         select(PredictionLog).where(PredictionLog.user_id == current_user.id)
-#     ).all()
-#     return logs
 
 @router.get("/logs/", response_model=List[PredictionLog])
 def list_logs(
